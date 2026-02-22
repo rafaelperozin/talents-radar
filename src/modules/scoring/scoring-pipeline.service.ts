@@ -41,6 +41,21 @@ export class ScoringPipelineService {
     return this.sortByScoreDesc(scored);
   }
 
+  scorePrefiltered(
+    talents: TalentEntity[],
+    filters?: FiltersDto,
+    weights?: WeightsDto,
+  ): ScoredTalent[] {
+    const normalizedWeights = this.normalizeWeights(weights);
+    return this.scoreTalents(talents, filters, normalizedWeights);
+  }
+
+  filterEssential(
+    essential?: FiltersDto['essential'],
+  ): Promise<TalentEntity[]> {
+    return this.applyEssentialFilters(essential);
+  }
+
   private async applyEssentialFilters(
     essential?: FiltersDto['essential'],
   ): Promise<TalentEntity[]> {

@@ -17,6 +17,9 @@ export class RadarEntity {
   @Column({ type: 'jsonb', nullable: true })
   weights?: Record<string, any>;
 
+  @Column({ type: 'int', default: 1 })
+  version: number;
+
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 

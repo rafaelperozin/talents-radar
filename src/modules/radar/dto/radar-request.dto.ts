@@ -2,6 +2,7 @@ import { Type } from 'class-transformer';
 import {
   IsOptional,
   IsString,
+  IsUUID,
   IsNumber,
   IsArray,
   IsEnum,
@@ -9,10 +10,6 @@ import {
   Max,
   ValidateNested,
 } from 'class-validator';
-
-// ───────────────────────────────────────────
-// Enums / constantes reutilizáveis
-// ───────────────────────────────────────────
 
 export enum SkillLevelEnum {
   BEGINNER = 'beginner',
@@ -26,11 +23,6 @@ export enum WorkTypeEnum {
   HYBRID = 'hybrid',
   ONSITE = 'onsite',
 }
-
-// ───────────────────────────────────────────
-// Essential filters — eliminatórios (AND)
-// Sem pesos: é pura eliminação.
-// ───────────────────────────────────────────
 
 export class EssentialTechnicalSkillDto {
   @IsString()
@@ -58,28 +50,14 @@ export class EssentialFiltersDto {
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => EssentialTechnicalSkillDto)
-  /**
-   * Opcional — use quando quiser adicionar precisão eliminatória por skill.
-   * Talento que não atender TODOS os requisitos listados é descartado.
-   */
-  technicalSkills?: EssentialTechnicalSkillDto[]; // AND — minLevel
+  technicalSkills?: EssentialTechnicalSkillDto[];
 
   @IsOptional()
   @IsArray()
   @IsString({ each: true })
-  softSkills?: string[]; // AND — talento deve ter TODAS
+  softSkills?: string[];
 }
 
-// ───────────────────────────────────────────
-// Preferred / Bonus — influenciam o score
-// ───────────────────────────────────────────
-
-/**
- * Cada technical skill no preferred/bonus tem:
- *  - name: nome da skill (matched com variants do talento)
- *  - expectedLevel: nível desejado (score proporcional)
- *  - weight: peso individual desta skill no sub-score (0–100)
- */
 export class WeightedTechnicalSkillDto {
   @IsString()
   name: string;
@@ -91,7 +69,7 @@ export class WeightedTechnicalSkillDto {
   @IsNumber()
   @Min(0)
   @Max(100)
-  weight?: number; // default = peso igual entre skills
+  weight?: number;
 }
 
 export class PreferredFiltersDto {
@@ -104,12 +82,12 @@ export class PreferredFiltersDto {
   @IsOptional()
   @IsArray()
   @IsString({ each: true })
-  softSkills?: string[]; // interseção
+  softSkills?: string[];
 
   @IsOptional()
   @IsNumber()
   @Min(0)
-  salary?: number; // budget — quanto menor expectedSalary vs budget, melhor
+  salary?: number;
 
   @IsOptional()
   @IsArray()
@@ -123,7 +101,7 @@ export class PreferredFiltersDto {
   @IsOptional()
   @IsArray()
   @IsString({ each: true })
-  keywords?: string[]; // busca genérica em vários campos
+  keywords?: string[];
 }
 
 export class BonusFiltersDto {
@@ -158,10 +136,6 @@ export class BonusFiltersDto {
   keywords?: string[];
 }
 
-// ───────────────────────────────────────────
-// Filters container
-// ───────────────────────────────────────────
-
 export class FiltersDto {
   @IsOptional()
   @ValidateNested()
@@ -179,11 +153,6 @@ export class FiltersDto {
   bonus?: BonusFiltersDto;
 }
 
-// ───────────────────────────────────────────
-// Weights (category-level, 0–100)
-// Essential NÃO tem peso — é eliminatório.
-// ───────────────────────────────────────────
-
 export class WeightsDto {
   @IsOptional()
   @IsNumber()
@@ -198,11 +167,11 @@ export class WeightsDto {
   bonus?: number;
 }
 
-// ───────────────────────────────────────────
-// Main request DTO
-// ───────────────────────────────────────────
-
 export class RadarRequestDto {
+  @IsOptional()
+  @IsUUID()
+  radarId?: string;
+
   @IsOptional()
   @ValidateNested()
   @Type(() => FiltersDto)

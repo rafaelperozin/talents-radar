@@ -4,6 +4,7 @@ import { DataSource } from 'typeorm';
 import { TalentEntity } from '../src/modules/talent/talent.entity';
 import { TechnicalSkillEntity } from '../src/modules/talent/technical-skill.entity';
 import { RadarEntity } from '../src/modules/radar/entity/radar.entity';
+import { RadarTalentScoreEntity } from '../src/modules/radar/entity/radar-talent-score.entity';
 
 export default new DataSource({
   type: 'postgres',
@@ -13,6 +14,11 @@ export default new DataSource({
   password: process.env.DB_PASS,
   database: process.env.DB_NAME,
   synchronize: false,
-  entities: [TalentEntity, TechnicalSkillEntity, RadarEntity],
+  entities: [
+    TalentEntity,
+    TechnicalSkillEntity,
+    RadarEntity,
+    RadarTalentScoreEntity,
+  ],
   migrations: [__dirname + '/migrations/*{.ts,.js}'],
 });
