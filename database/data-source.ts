@@ -2,6 +2,8 @@ import 'dotenv/config';
 import 'reflect-metadata';
 import { DataSource } from 'typeorm';
 import { TalentEntity } from '../src/modules/talent/talent.entity';
+import { TechnicalSkillEntity } from '../src/modules/talent/technical-skill.entity';
+import { RadarEntity } from '../src/modules/radar/entity/radar.entity';
 
 export default new DataSource({
   type: 'postgres',
@@ -11,6 +13,6 @@ export default new DataSource({
   password: process.env.DB_PASS,
   database: process.env.DB_NAME,
   synchronize: false,
-  entities: [TalentEntity],
+  entities: [TalentEntity, TechnicalSkillEntity, RadarEntity],
   migrations: [__dirname + '/migrations/*{.ts,.js}'],
 });

@@ -1,0 +1,26 @@
+{
+  "context": {
+    "include": [
+      "docs/context/*.md",
+      ".prettierrc",
+      "eslint.config.mjs",
+      "tsconfig.json"
+    ]
+  },
+  "files": {
+    "exclude": [
+      "node_modules/**",
+      "dist/**",
+      "build/**",
+      "*.log"
+    ]
+  },
+  "instructions": [
+    "SEMPRE use Yarn (não NPM): `yarn install`, `yarn dev`, `yarn build`, `yarn format`, `yarn lint:errors`",
+    "DIRETRIZES: Use /docs como referência obrigatória para todos os códigos (convenções, padrões, estrutura, boas práticas) e também sempre busque arquivos que façam coisas similares para replicar os padrões sem ferir as guidelines",
+    "EFICIÊNCIA: Use multi_replace_string_in_file para múltiplas edições. Paralelizar leituras de arquivos independentes",
+    "CONTEXTO: SEMPRE leia arquivos antes de editar. Nunca assuma o conteúdo atual",
+    "ETAPAS: Quebre tarefas grandes em etapas. Execute uma por vez e confirme antes da próxima",
+    "CONCISÃO: Respostas diretas e objetivas. Não criar arquivos .md de resumo a menos que solicitado"
+  ]
+}

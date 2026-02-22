@@ -1,21 +1,40 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { TalentEntity } from '../talent/talent.entity';
+import { RadarEntity } from './entity/radar.entity';
+import { RadarRequestDto } from './dto/radar-request.dto';
+import { ScoringPipelineService } from '../scoring/scoring-pipeline.service';
+import { ScoredTalent } from '../scoring/interfaces/scoring.interfaces';
 
 @Injectable()
 export class RadarService {
   constructor(
-    @InjectRepository(TalentEntity)
-    private readonly talentsRepo: Repository<TalentEntity>,
+    @InjectRepository(RadarEntity)
+    private readonly radarsRepo: Repository<RadarEntity>,
+    private readonly scoringPipeline: ScoringPipelineService,
   ) {}
 
-  async getRadar() {
-    const talents = await this.talentsRepo.find({
-      order: { createdAt: 'DESC' },
-      take: 50,
-    });
+  async searchTalents(
+    dto: RadarRequestDto,
+  ): Promise<{ radarId: string; talents: ScoredTalent[] }> {
+    const radar = await this.persistRadarConfig(dto);
 
-    return { talents };
+    const scoredTalents = await this.scoringPipeline.execute(
+      dto.filters,
+      dto.weights,
+    );
+
+    return {
+      radarId: radar.id,
+      talents: scoredTalents,
+    };
+  }
+
+  private async persistRadarConfig(dto: RadarRequestDto): Promise<RadarEntity> {
+    const radar = this.radarsRepo.create({
+      filters: dto.filters as Record<string, any>,
+      weights: dto.weights as Record<string, any>,
+    });
+    return this.radarsRepo.save(radar);
   }
 }
